@@ -110,11 +110,15 @@ func GetTeamStatsHistory(team_id string) {
 }
 
 func PostRedisData(team_id string, data StatisticsHistory) {
+	redis_host := os.Getenv("WCGSTATS_SCRAPER_REDIS_HOST")
+	if redis_host == "" {
+		redis_host = "localhost"
+	}
 	log.WithFields(log.Fields{
 		"team_id": team_id,
 	}).Info("Posting stats to redis")
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     redis_host + ":6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
