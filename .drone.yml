@@ -10,3 +10,13 @@ pipeline:
       event: push
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  deploy:
+    image: plugins/ssh
+    host: gallifrey.sklirg.io
+    port: 22
+    user: root
+    when:
+      branch: master
+      event: push
+    commands:
+      - docker pull registry.sklirg.io/wcgstats-scraper
