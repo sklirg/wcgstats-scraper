@@ -18,5 +18,5 @@ pipeline:
     when:
       branch: master
       event: push
-    commands:
+    script:
       - docker pull registry.sklirg.io/wcgstats-scraper
