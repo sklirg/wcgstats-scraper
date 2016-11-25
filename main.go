@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/redis.v5"
@@ -137,25 +136,6 @@ func PostRedisData(team_id string, data StatisticsHistory) {
 			"data": data.DailyStatisticsTotals[i],
 			"json": string(j),
 		}).Debug("Value to insert")
-
-		competitionStart, _ := time.Parse("2006-01-02", "2016-11-24")
-		competitionEnd, _ := time.Parse("2006-01-02", "2016-12-24")
-		date, err := time.Parse("2006-01-02", data.DailyStatisticsTotals[i].Date)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"err":     err,
-				"date":    data.DailyStatisticsTotals[i].Date,
-				"dateObj": date,
-			}).Error("Could not parse time string.")
-			continue
-		}
-
-		if date.Unix() < competitionStart.Unix() || date.Unix() > competitionEnd.Unix() {
-			log.WithFields(log.Fields{
-				"date": date,
-			}).Debug("Skipping date outside range...")
-			continue
-		}
 
 		res := client.HSet(team_id, string(data.DailyStatisticsTotals[i].Date), string(j))
 		if res.Err() != nil {
