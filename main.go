@@ -115,7 +115,8 @@ func PostRedisData(team_id string, data StatisticsHistory) {
 		redis_host = "localhost"
 	}
 	log.WithFields(log.Fields{
-		"team_id": team_id,
+		"team_id":    team_id,
+		"redis_host": redis_host,
 	}).Info("Posting stats to redis")
 	client := redis.NewClient(&redis.Options{
 		Addr:     redis_host + ":6379",
@@ -149,10 +150,10 @@ func PostRedisData(team_id string, data StatisticsHistory) {
 			continue
 		}
 
-		if date.Unix() <= competitionStart.Unix() || date.Unix() >= competitionEnd.Unix() {
+		if date.Unix() < competitionStart.Unix() || date.Unix() > competitionEnd.Unix() {
 			log.WithFields(log.Fields{
 				"date": date,
-			}).Info("Skipping date outside range...")
+			}).Debug("Skipping date outside range...")
 			continue
 		}
 
@@ -168,7 +169,7 @@ func PostRedisData(team_id string, data StatisticsHistory) {
 				"value": res.Val(),
 				"error": res.Err(),
 				"i":     i,
-			}).Debug("Response from request.")
+			}).Info("Response from request.")
 		}
 	}
 }
